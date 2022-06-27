@@ -20,12 +20,12 @@ def dump_worker_pool_states():
 		      " nr_workers: ", worker_pool.nr_workers.value_(), "\n")
 
 		if (list_empty(worker_pool.worklist.address_of_())):
-			print("There are no pending work items on this pool \n")
+			print("\tThere are no pending work items on this pool \n")
 		else:
-			print("Pending work items on this pool \n")
+			print("\tPending work items on this pool \n")
 			for work in list_for_each_entry("struct work_struct", worker_pool.worklist.address_of_(), "entry"):
 				work_struct = Object(prog, 'struct work_struct', address=work.value_())
-				print("work: ", hex(work.value_()), "func: ", hex(work_struct.func.value_()), "\n")
+				print("\t\twork: ", hex(work.value_()), "func: ", hex(work_struct.func.value_()), "\n")
 	
 
 dump_worker_pool_states()
