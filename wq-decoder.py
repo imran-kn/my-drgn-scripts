@@ -49,6 +49,7 @@ def dump_workqueue_states():
 	for wq in list_for_each_entry("struct workqueue_struct", prog['workqueues'].address_of_(), "list"):
 		workqueue = Object(prog, "struct workqueue_struct", address=wq.value_())
 		print("workqueue: ", workqueue.name.string_())
+		print("flags: ")
 		if(workqueue.flags.value_() & WQ_UNBOUND):
 			print("\tWQ_UNBOUND\n")
 		if(workqueue.flags.value_() & WQ_FREEZABLE):
@@ -71,6 +72,12 @@ def dump_workqueue_states():
 			print("\t__WQ_LEGACY\n")
 		if(workqueue.flags.value_() & __WQ_ORDERED_EXPLICIT):
 			print("\t__WQ_ORDERED_EXPLICIT\n")
+
+
+		for pool in list_for_each_entry("struct pool_workqueue", workqueue.pwqs.address_of_(), "pwqs_node"):
+			wq_pool = Object(prog, "struct pool_workqueue", address=pool.value_())
+			print("pwq/cpu:", str(hex(pool.value_())) + "/" + str(wq_pool.pool.cpu.value_()), "\t",
+			      "active/maxactive:", str(wq_pool.nr_active.value_()) + "/" + str(wq_pool.max_active.value_()), "\n")
 
 dump_worker_pool_states()
 dump_workqueue_states()
